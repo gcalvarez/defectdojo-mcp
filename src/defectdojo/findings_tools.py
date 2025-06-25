@@ -170,7 +170,7 @@ async def add_finding_note(finding_id: int, note: str) -> Dict[str, Any]:
     return {"status": "success", "data": result}
 
 
-async def create_finding(title: str, test_id: int, severity: str, description: str,
+async def create_finding(title: str, test_id: int, severity: str, description: str, found_by: list,
                         cwe: Optional[int] = None, cvssv3: Optional[str] = None,
                         mitigation: Optional[str] = None, impact: Optional[str] = None,
                         steps_to_reproduce: Optional[str] = None,
@@ -183,6 +183,7 @@ async def create_finding(title: str, test_id: int, severity: str, description: s
         test_id: ID of the test to associate the finding with
         severity: Severity level (Critical, High, Medium, Low, Info)
         description: Description of the finding
+        found_by: Required ID of the origin test of the finding
         cwe: Optional CWE identifier
         cvssv3: Optional CVSS v3 score string
         mitigation: Optional mitigation steps
@@ -209,11 +210,11 @@ async def create_finding(title: str, test_id: int, severity: str, description: s
         "test": test_id,
         "severity": api_severity,
         "description": description,
+        "found_by": found_by,
         # Set defaults expected by API if not provided explicitly by user?
         # e.g., "active": True, "verified": False? Check API docs.
         "active": True,
-        "verified": False,
-        "found_by": [0]
+        "verified": False
     }
 
     # Add optional fields if provided
