@@ -173,7 +173,9 @@ async def add_finding_note(finding_id: int, note: str) -> Dict[str, Any]:
 async def create_finding(title: str, test_id: int, severity: str, description: str,
                         cwe: Optional[int] = None, cvssv3: Optional[str] = None,
                         mitigation: Optional[str] = None, impact: Optional[str] = None,
-                        steps_to_reproduce: Optional[str] = None) -> Dict[str, Any]:
+                        steps_to_reproduce: Optional[str] = None,
+                        numerical_severity: Optional[str] = "S2"
+                        ) -> Dict[str, Any]:
     """Create a new finding.
 
     Args:
@@ -186,6 +188,7 @@ async def create_finding(title: str, test_id: int, severity: str, description: s
         mitigation: Optional mitigation steps
         impact: Optional impact description
         steps_to_reproduce: Optional steps to reproduce
+        numerical_severity: Optional numerical representation of the severity (default: S2)
 
     Returns:
         Dictionary with status and data/error
@@ -210,6 +213,7 @@ async def create_finding(title: str, test_id: int, severity: str, description: s
         # e.g., "active": True, "verified": False? Check API docs.
         "active": True,
         "verified": False,
+        "found_by": [0]
     }
 
     # Add optional fields if provided
@@ -223,6 +227,8 @@ async def create_finding(title: str, test_id: int, severity: str, description: s
         data["impact"] = impact
     if steps_to_reproduce:
         data["steps_to_reproduce"] = steps_to_reproduce
+    if numerical_severity:
+        data["numerical_severity"] = numerical_severity
 
     client = get_client()
     result = await client.create_finding(data)
